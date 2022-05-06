@@ -140,7 +140,7 @@ Plants.prototype.genO2 = function () {
 let dog = new Animal('pipi', 'wang!wang!')
 
 //----------------------------------------------------------使用create
-// Animal.prototype = Object.create(Plants.prototype) ||
+// Animal.prototype = Object.create(Plants.prototype) 
 //     console.log(Animal.prototype)
 // /*
 //     Plants {}
