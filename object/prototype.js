@@ -175,3 +175,69 @@ dog.shout() // pipi wang!wang!
 cats.shout('sdf') // mimi miao~miao~
 cats.genO2() // mimi 生成氧气。
 Animal.prototype.__proto__.shout()
+
+/**
+ *  以上定义可以发现，存在多次重复Person.prototype的赋值
+ */
+function Person() { }
+Person.prototype = {
+    name: "Nicolas",
+    age: 29,
+    job: "Software Engineer",
+    sayName() {
+        console.log(this.name)
+    }
+}
+let friend = new Person()
+console.log(friend instanceof Object)
+console.log(friend instanceof Person)
+console.log(friend.constructor == Person)
+console.log(friend.constructor == Object)
+
+// 恢复constructor
+Object.defineProperty(Person.prototype, "constructor", {
+    enumerable: false,
+    value: Person
+})
+
+
+/**
+ *  重写原型对实例的影响
+ */
+function Person() { }
+friend = new Person()
+Person.prototype.sayHi = function () {
+    console.log("Hi")
+}
+friend.sayHi()
+Person.prototype = {
+    constructor: Person,
+    name: "Nicholas",
+    age: 29,
+    job: "Software Engineer",
+    friends: ['1', '2', '3'],
+    sayName() {
+        console.log(this.name)
+    }
+}
+friend.sayName()    //错误
+
+/**
+ * 共享性的弊端
+ */
+function Person() { }
+
+Person.prototype = {
+    constructor: Person,
+    name: "Nicholas",
+    age: 29,
+    job: "Software Engineer",
+    friends: ['1', '2', '3'],
+    sayName() {
+        console.log(this.name)
+    }
+}
+let friend1 = new Person(),
+    friend2 = new Person();
+friend1.friends.push('new')
+console.log(friend2.friends)    //[ '1', '2', '3', 'new' ]
