@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <script>
+        // 构建初始数据
+        const originList = () => {
+            let arr = []
+            for (let index = 0; index < 100000; index++) {
+                arr.push(index)
+            }
+            return arr
+        }
+
+        // list有值时post list，反之get result
+        const createWorker = (list = undefined) => {
+            const worker = new SharedWorker("./worker.js", { name: 'test' })
+            worker.port.start()
+            worker.port.postMessage(list)
+            return worker
+        }
+
+        // 按worker数量，切分list，并post给worker
+        const sliceFile = (list) => {
+            const workerNum = 5,
+                num = list.length / workerNum
+            for (let index = 0; index < workerNum; index++) {
+                const res = list.slice(index * num, num * (index + 1))
+                createWorker(res)
+            }
+        }
+
+        // 获取worker计算后的结果
+        const getResult = () => {
+            const worker = createWorker()
+            worker.port.onmessage = ({ data }) => {
+                console.log(data);
+            }
+        }
+
+        const init = () => {
+            const list = originList()
+            sliceFile(list)
+        }
+        console.time('worker:')
+        init()
+        getResult()
+        console.timeEnd('worker:')
+
+        console.time('time:')
+        const array = originList()
+        let res = []
+        for (let index = 0; index < array.length; index++) {
+            res.push(array[index] * Math.random())
+        }
+        console.log(res)
+        console.timeEnd('time:')
+    </script>
+</body>
+
+</html>
