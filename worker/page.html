@@ -22,7 +22,7 @@
 
         // 按worker数量，切分list，并post给worker
         const sliceFile = (list) => {
-            const workerNum = 5,
+            const workerNum = 1,
                 num = list.length / workerNum
             for (let index = 0; index < workerNum; index++) {
                 const res = list.slice(index * num, num * (index + 1))
@@ -35,6 +35,7 @@
             const worker = createWorker()
             worker.port.onmessage = ({ data }) => {
                 console.log(data);
+                console.timeEnd('worker:')
             }
         }
 
@@ -42,11 +43,6 @@
             const list = originList()
             sliceFile(list)
         }
-        console.time('worker:')
-        init()
-        getResult()
-        console.timeEnd('worker:')
-
         console.time('time:')
         const array = originList()
         let res = []
@@ -55,6 +51,11 @@
         }
         console.log(res)
         console.timeEnd('time:')
+
+        console.time('worker:')
+        init()
+        getResult()
+
     </script>
 </body>
 
